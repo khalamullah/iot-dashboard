@@ -8,9 +8,11 @@ from datetime import datetime, timedelta
 import json
 from typing import List, Dict, Optional
 import threading
+import os
 
-# Database path
-DB_PATH = "iot_data.db"
+# Database path - use /tmp for cloud deployments (Railway has read-only filesystem)
+DEFAULT_DB_PATH = '/tmp/iot_data.db' if os.getenv('RAILWAY_ENVIRONMENT') else 'iot_data.db'
+DB_PATH = os.getenv('DATABASE_URL', DEFAULT_DB_PATH)
 
 # Thread-safe lock for database operations
 db_lock = threading.Lock()
