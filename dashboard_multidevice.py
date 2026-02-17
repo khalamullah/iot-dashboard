@@ -35,9 +35,8 @@ MQTT_PASSWORD = os.getenv('MQTT_PASSWORD', '')
 MQTT_CLIENT_ID = "iot_dashboard_" + str(int(time.time()))
 
 # Database Configuration (from environment variables)
-# Use /tmp for cloud deployments (Railway has read-only filesystem except /tmp)
-DEFAULT_DB_PATH = '/tmp/iot_data.db' if os.getenv('RAILWAY_ENVIRONMENT') else 'iot_data.db'
-DB_PATH = os.getenv('DATABASE_URL', DEFAULT_DB_PATH)
+# Use /tmp for SQLite (writable on Railway's ephemeral filesystem)
+DB_PATH = os.getenv('DATABASE_URL', '/tmp/iot_data.db')
 if DB_PATH.startswith('postgres://'):
     DB_PATH = DB_PATH.replace('postgres://', 'postgresql://', 1)
 
