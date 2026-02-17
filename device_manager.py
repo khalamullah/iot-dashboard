@@ -43,22 +43,35 @@ class DeviceManager:
                 )
             ''')
             
-            # Check if device_id column exists in sensor_data
-            cursor.execute("PRAGMA table_info(sensor_data)")
-            columns = [col[1] for col in cursor.fetchall()]
+            # Check if sensor_data table exists before trying to alter it
+            cursor.execute("""
+                SELECT name FROM sqlite_master 
+                WHERE type='table' AND name='sensor_data'
+            """)
+            if cursor.fetchone():
+                # Table exists, check if device_id column exists
+                cursor.execute("PRAGMA table_info(sensor_data)")
+                columns = [col[1] for col in cursor.fetchall()]
+                
+                if 'device_id' not in columns:
+                    cursor.execute('ALTER TABLE sensor_data ADD COLUMN device_id TEXT')
             
-            if 'device_id' not in columns:
-                cursor.execute('ALTER TABLE sensor_data ADD COLUMN device_id TEXT')
-            
-            # Check if device_id column exists in control_commands
-            cursor.execute("PRAGMA table_info(control_commands)")
-            columns = [col[1] for col in cursor.fetchall()]
-            
-            if 'device_id' not in columns:
-                cursor.execute('ALTER TABLE control_commands ADD COLUMN device_id TEXT')
+            # Check if control_commands table exists before trying to alter it
+            cursor.execute("""
+                SELECT name FROM sqlite_master 
+                WHERE type='table' AND name='control_commands'
+            """)
+            if cursor.fetchone():
+                # Table exists, check if device_id column exists
+                cursor.execute("PRAGMA table_info(control_commands)")
+                columns = [col[1] for col in cursor.fetchall()]
+                
+                if 'device_id' not in columns:
+                    cursor.execute('ALTER TABLE control_commands ADD COLUMN device_id TEXT')
             
             conn.commit()
             conn.close()
+
     
     def register_device(self, device_id: str, device_name: str, device_type: str, 
                        location: str = "", capabilities: Dict = None) -> bool:
