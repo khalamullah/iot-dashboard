@@ -10,9 +10,8 @@ from typing import List, Dict, Optional
 import threading
 import os
 
-# Database path - use /tmp for cloud deployments (Railway has read-only filesystem)
-DEFAULT_DB_PATH = '/tmp/iot_data.db' if os.getenv('RAILWAY_ENVIRONMENT') else 'iot_data.db'
-DB_PATH = os.getenv('DATABASE_URL', DEFAULT_DB_PATH)
+# Database path - use /tmp for SQLite (writable on Railway's ephemeral filesystem)
+DB_PATH = os.getenv('DATABASE_URL', '/tmp/iot_data.db')
 
 # Thread-safe lock for database operations
 db_lock = threading.Lock()
